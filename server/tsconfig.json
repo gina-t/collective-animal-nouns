@@ -1,0 +1,45 @@
+{
+  "compilerOptions": {
+
+    /* Projects */
+    "incremental": false,                    
+
+    /* Language and Environment */
+    "target": "ES2022",                                  
+    "lib": ["ES2023"],                                   
+
+    /* Modules */
+    "module": "nodenext",                                  
+    "rootDir": "./src",                                  
+    "moduleResolution": "nodenext",                      
+    "typeRoots": ["./node_modules/@types", "./src/types"],                          
+    "resolveJsonModule": true,                        
+
+    /* JavaScript Support */
+    "allowJs": true,                                  
+    "checkJs": true,                                  
+
+    /* Emit */
+    "declaration": true,                             
+    "sourceMap": true,                                
+    "outDir": "./dist",                                   
+    "noEmitOnError": false,         
+
+    /* Interop Constraints */
+    "allowSyntheticDefaultImports": true,             
+    "esModuleInterop": true,                             
+    "forceConsistentCasingInFileNames": true,   
+
+    /* Type Checking */
+    "strict": true,                                      
+    "noImplicitAny": true,                            
+    "strictNullChecks": true,                         
+    "noImplicitReturns": true,      
+
+    /* Completeness */
+    "skipDefaultLibCheck": true,                      
+    "skipLibCheck": true,                                 
+  },
+  "include": ["src/**/*.ts", "src/types/*.d.ts", "*.d.ts"],
+  "exclude": ["node_modules", "dist"]
+}

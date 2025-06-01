@@ -1,0 +1,36 @@
+/* global css */
+@import "tailwindcss";
+
+@font-face {
+  font-family: "Cupidus";
+  font-style: normal;
+  src: url("../src/assets/Cupidus-Extralight.ttf") format("truetype");
+}
+@font-face {
+  font-family: "SantEliaScript";
+  font-style: normal;
+  src: url("../src/assets/SantEliaScript-ExtraLight.woff2") format("woff2");
+}
+
+@theme {
+  --font-cupidus: "Cupidus", sans-serif;
+  --font-script: "SantEliaScript", serif;
+}
+
+/* Base styles */
+body h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  font-family: theme(--font-cupidus);
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:focus {
+  transition:
+    background-color 600000s 0s,
+    color 600000s 0s;
+}
