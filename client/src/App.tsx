@@ -1,17 +1,29 @@
-import Router from './router';
-import gsap from 'gsap';
-import { ScrollSmoother } from 'gsap/ScrollSmoother';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { SplitText } from 'gsap/SplitText';
-import { useGSAP } from '@gsap/react';
-import './App.css'
+import Router from "./router";
+import TransitionComponent from "./components/Transition";
+import gsap from "gsap";
+import { ScrollSmoother } from "gsap/ScrollSmoother";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { ScrollToPlugin } from "gsap/ScrollToPlugin"; 
+import { SplitText } from "gsap/SplitText";
+import { useGSAP } from "@gsap/react";
 
-gsap.registerPlugin(ScrollSmoother, ScrollTrigger, SplitText, useGSAP);
+// Register plugins
+gsap.registerPlugin(
+  ScrollSmoother,
+  ScrollTrigger,
+  ScrollToPlugin,
+  SplitText,
+  useGSAP,
+);
 
 export default function App() {
   return (
-    <>
-      <Router />
-    </>
+    <TransitionComponent>
+      <div>
+        <Router />
+      </div>
+    </TransitionComponent>
   );
 }
+
+
