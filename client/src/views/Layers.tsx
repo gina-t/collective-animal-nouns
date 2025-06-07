@@ -24,59 +24,63 @@ export default function Layers() {
     () => {
       if (!completed) return;
       
-      const panels = gsap.utils.toArray<Element>('.snap-section');
-      let scrollStarts: number[] = [0];
-      let snapScroll: (value: number, direction?: number) => number = (value: number) => value;
-      
-      panels.forEach((panel, i) => {
-        snapTriggers.current[i] = ScrollTrigger.create({
-          trigger: panel,
-          start: "top top"
-        });
-      });
-
-      ScrollTrigger.addEventListener("refresh", () => {
-        scrollStarts = snapTriggers.current.map(trigger => trigger.start);
-        snapScroll = ScrollTrigger.snapDirectional(scrollStarts);
-      });
-
-      ScrollTrigger.observe({
-        type: "wheel,touch",
-        onChangeY(self: ScrollTriggerObserverSelf) {
-          if (!scrollTween.current) {
-            const scroll = snapScroll(self.scrollY() + self.deltaY, self.deltaY > 0 ? 1 : -1);
-            goToSection(scrollStarts.indexOf(scroll));
-          }
-        }
-      });
-
-      // Animate all panel paragraphs
-      const panelTexts = gsap.utils.toArray<Element>('.panel-text');
-      panelTexts.forEach((text) => { // ← Removed unused 'i' parameter
-        const splitText = new SplitText(text, {
-          type: 'chars',
-          charsClass: 'char'
+      // Wait for fonts inside the useGSAP callback
+      document.fonts.ready.then(() => {
+        const panels = gsap.utils.toArray<Element>('.snap-section');
+        let scrollStarts: number[] = [0];
+        let snapScroll: (value: number, direction?: number) => number = (value: number) => value;
+        
+        panels.forEach((panel, i) => {
+          snapTriggers.current[i] = ScrollTrigger.create({
+            trigger: panel,
+            start: "top top"
+          });
         });
 
-        // Animate each paragraph when its panel comes into view
-        ScrollTrigger.create({
-          trigger: text.closest('.snap-section'),
-          start: "top center",
-          onEnter: () => {
-            gsap.from(splitText.chars, {
-              opacity: 0,
-              y: 50,
-              stagger: 0.05,
-              duration: 0.8,
-              ease: "back.out(1.7)"
-            });
+        ScrollTrigger.addEventListener("refresh", () => {
+          scrollStarts = snapTriggers.current.map(trigger => trigger.start);
+          snapScroll = ScrollTrigger.snapDirectional(scrollStarts);
+        });
+
+        ScrollTrigger.observe({
+          type: "wheel,touch",
+          onChangeY(self: ScrollTriggerObserverSelf) {
+            if (!scrollTween.current) {
+              const scroll = snapScroll(self.scrollY() + self.deltaY, self.deltaY > 0 ? 1 : -1);
+              goToSection(scrollStarts.indexOf(scroll));
+            }
           }
         });
-      });
 
-      ScrollTrigger.refresh();
+        // Animate all panel paragraphs
+        const panelTexts = gsap.utils.toArray<Element>('.panel-text');
+        panelTexts.forEach((text) => {
+          const splitText = new SplitText(text, {
+            type: 'chars',
+            charsClass: 'char'
+          });
+
+          // Animate each paragraph when its panel comes into view
+          ScrollTrigger.create({
+            trigger: text.closest('.snap-section'),
+            start: "top center",
+            toggleActions: "play none none reverse",
+            onEnter: () => {
+              gsap.from(splitText.chars, {
+                opacity: 0,
+                y: 50,
+                stagger: 0.05,
+                duration: 0.8,
+                ease: "back.out(1.7)"
+              });
+            }
+          });
+        });
+
+        ScrollTrigger.refresh();
+      });
     },
-    {
+    { // ← Fixed: object is outside the promise callback
       dependencies: [completed],
       scope: main,
       revertOnUpdate: true,
