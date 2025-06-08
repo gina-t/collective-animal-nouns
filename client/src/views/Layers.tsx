@@ -43,22 +43,32 @@ export default function Layers() {
 
           // Animate each paragraph when its panel comes into view
           ScrollTrigger.create({
-            trigger: text.closest('div.min-h-screen'), // ← Fixed: target the panel div
-            start: "top 80%",
-            toggleActions: "play none none reverse",
+            trigger: text.closest('div.min-h-screen'),
+            start: "top 90%", // Earlier trigger
+            end: "center center",
+            toggleActions: "play pause resume reverse",
             invalidateOnRefresh: true,
+            // markers: true,
             onEnter: () => {
-              gsap.from(splitText.chars, {
-                opacity: 0,
-                y: 30,
-                stagger: 0.02,
-                duration: 0.8,
-                ease: "power2.out",
-                onComplete: () => {
-                  // Clean up willChange for THIS specific splitText
-                  gsap.set(splitText.chars, { willChange: 'auto' });
+              // Slower, more visible animation
+              gsap.fromTo(splitText.chars,
+                {
+                  opacity: 0,
+                  y: 50,
+                  scale: 0.8
+                },
+                {
+                  opacity: 1,
+                  y: 0,
+                  scale: 1,
+                  stagger: 0.08, // Slower stagger - more visible
+                  duration: 2.0, // Much longer duration
+                  ease: "back.out(1.7)",
+                  onComplete: () => {
+                    gsap.set(splitText.chars, { willChange: 'auto' });
+                  }
                 }
-              });
+              );
             },
             onLeave: () => {
               gsap.set(splitText.chars, { opacity: 1, y: 0 });
