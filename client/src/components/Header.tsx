@@ -1,101 +1,113 @@
-import { useRef, useEffect } from 'react';
-import { gsap } from 'gsap';
-import { SplitText } from 'gsap/SplitText';
+import { useRef } from "react";
+import { gsap } from "gsap";
+import { SplitText } from "gsap/SplitText";
+import { useGSAP } from "@gsap/react";
 import Dragonfly from "./Dragonfly";
 
 gsap.registerPlugin(SplitText);
 
 export default function Header() {
-  const headingRef = useRef<HTMLHeadingElement>(null);
-  const paragraphRef = useRef<HTMLParagraphElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
 
-  {/* heading split text*/}
-  useEffect(() => {
-    if (headingRef.current) {
+  useGSAP(
+    () => {
+      if (!headerRef.current) return;
+
       document.fonts.ready.then(() => {
-        const splitText = new SplitText(headingRef.current, {
-          type: 'chars, words, lines',
-          mask: 'lines',
-          linesClass: 'line',
-          wordsClass: 'word', 
-          charsClass: 'letter'
-        });
-        {/* heading tween */}
-        gsap.from(splitText.chars, {
-          y: -100,
-          autoAlpha: 0,
-          stagger: {
-            amount: 0.8,
-            from: 'random',
-          },
-        });
+          if (!headerRef.current) return;
 
-        return () => {
-          splitText.revert();
-        };
-      });
-    }
-  }, []);
+          // Get both heading and paragraph elements
+          const heading = headerRef.current.querySelector("h2");
+          const paragraph = headerRef.current.querySelector("p");
 
-  {/* paragraph split text*/}
-  useEffect(() => {
-    if (paragraphRef.current) {
-      document.fonts.ready.then(() => {
-        const splitText = new SplitText(paragraphRef.current, {
-          type: 'words, lines, chars',
-          mask: 'lines',
-          linesClass: 'line',
-          wordsClass: 'word', 
-          charsClass: 'letter'
+          if (!heading || !paragraph) return;
+
+          // Heading SplitText
+          const headingSplit = new SplitText(heading, {
+            type: "chars, words, lines",
+            mask: "lines",
+            linesClass: "line",
+            wordsClass: "word",
+            charsClass: "letter",
+          });
+
+          // Paragraph SplitText
+          const paragraphSplit = new SplitText(paragraph, {
+            type: "words, lines, chars",
+            mask: "lines",
+            linesClass: "line",
+            wordsClass: "word",
+            charsClass: "letter",
+          });
+
+          // Heading animation
+          gsap.from(headingSplit.chars, {
+            y: -100,
+            autoAlpha: 0,
+            repeat: 2, 
+            yoyo: true, 
+            stagger: {
+              amount: 0.8,
+              from: "random",
+              ease: "power2.out",
+            },
+            duration: 1.0,
+            ease: "power2.out",
+          });
+
+          // Paragraph animation (delayed)
+          gsap.from(paragraphSplit.chars, {
+            autoAlpha: 0,
+            stagger: {
+              amount: 9.0,
+              from: "start",
+              ease: "none",
+            },
+            duration: 0.01,
+            delay: 1.0,
+          });
+        })
+        .catch((error) => {
+          console.error("Font loading failed:", error);
         });
-         {/* paragraph tween */}
-        gsap.from(splitText.chars, {
-          autoAlpha: 0,
-          stagger: {
-            amount: 9.0,
-            from: 'start',
-            ease: 'none', 
-          },
-          duration: 0.01, 
-          delay: 1.0,
-        });
-        return () => {
-          splitText.revert();
-        };
-      });
-    }
-  }, []);
+    },
+    {
+      scope: headerRef, // ✅ Scoped to header container
+      revertOnUpdate: true, // ✅ Automatic cleanup for both animations
+    },
+  );
 
   return (
-    <div className="relative isolate overflow-hidden bg-[#85A98F] px-6 py-24 sm:py-32 lg:px-8">
-   
+    <div
+      ref={headerRef}
+      className="relative isolate overflow-hidden bg-[#85A98F] px-6 py-24 sm:py-32 lg:px-8"
+    >
       {/* Main content */}
       <div className="mx-auto max-w-2xl text-center">
-        <h2 
-          ref={headingRef}
-          className="text-5xl/normal font-medium tracking-tight text-center text-amber-50 sm:text-7xl">
+        <h2 className="text-center text-5xl/normal font-medium tracking-tight text-amber-50 sm:text-7xl">
           Collective Nouns for Animals
         </h2>
-        <p 
-          ref={paragraphRef}
-          className="mt-8 text-lg/loose font-medium text-pretty text-center text-amber-50 sm:text-xl/8">
-          Nouns used in the english language to describe groups
-          of animals. <span>Collective nouns</span> are associated with the sounds,
+        <p className="mt-8 text-center text-lg/loose font-medium text-pretty text-amber-50 sm:text-xl/8">
+          Nouns used in the english language to describe groups of animals.{" "}
+          <span>Collective nouns</span> are associated with the sounds,
           appearance, behaviour or habitat of the animal group.
         </p>
         {/* Dragonfly */}
         <div className="flex justify-center">
-          <div className="w-96 h-96 opacity-70">
+          <div className="h-96 w-96 opacity-70">
             <Dragonfly />
           </div>
-        </div> 
+        </div>
       </div>
     </div>
   );
 }
 
-{/* Decorative blurred polygon overlay #1 bottom left */}
-      {/* <div
+{
+  /* Decorative blurred polygon overlay #1 bottom left */
+}
+{
+  /* <div
         aria-hidden="true"
         className="hidden sm:absolute sm:-top-10 sm:right-1/2 sm:-z-10 sm:mr-10 sm:block sm:transform-gpu sm:blur-3xl"
       >
@@ -106,9 +118,13 @@ export default function Header() {
           }}
           className="aspect-1097/845 w-274.25 bg-linear-to-tr from-[#FFCFCF] to-[#FF8A8A] opacity-30"
         />
-      </div> */}
-      {/* Decorative blurred polygon overlay #2 top right */}
-      {/* <div
+      </div> */
+}
+{
+  /* Decorative blurred polygon overlay #2 top right */
+}
+{
+  /* <div
         aria-hidden="true"
         className="absolute -top-52 left-1/2 -z-10 -translate-x-1/2 transform-gpu blur-3xl sm:top-[-28rem] sm:ml-16 sm:translate-x-0 sm:transform-gpu"
       >
@@ -119,4 +135,5 @@ export default function Header() {
           }}
           className="aspect-1097/845 w-274.25 bg-linear-to-tr from-[#FFCFCF] to-[#FF8A8A] opacity-30"
         />
-      </div> */}
+      </div> */
+}
