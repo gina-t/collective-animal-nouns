@@ -35,56 +35,111 @@ export default function Layers() {
         // Set willChange for ALL panel texts once at the beginning
         gsap.set('.panel-text', { willChange: 'transform' });
         
-        panelTexts.forEach((text) => {
+        panelTexts.forEach((text, index) => {
+          const usePatternA = index % 2 === 0; // Even indices = Pattern A, Odd = Pattern B
+          
           const splitText = new SplitText(text, {
             type: 'chars',
             charsClass: 'char'
           });
 
-          // Animate each paragraph when its panel comes into view
           ScrollTrigger.create({
             trigger: text.closest('div.min-h-screen'),
-            start: "top 90%", // Earlier trigger
+            start: "top 90%",
             end: "center center",
             toggleActions: "play pause resume reverse",
             invalidateOnRefresh: true,
-            // markers: true,
             onEnter: () => {
-              // Slower, more visible animation
-              gsap.fromTo(splitText.chars,
-                {
-                  opacity: 0,
-                  y: 50,
-                  scale: 0.8
-                },
-                {
-                  opacity: 1,
-                  y: 0,
-                  scale: 1,
-                  stagger: 0.08, // Slower stagger - more visible
-                  duration: 2.0, // Much longer duration
-                  ease: "back.out(1.7)",
+              if (usePatternA) {
+                // Pattern A: Your existing animation (scale + y movement)
+                gsap.fromTo(splitText.chars,
+                  {
+                    autoAlpha: 0,
+                    y: 50,
+                    scale: 0.8
+                  },
+                  {
+                    autoAlpha: 1,
+                    y: 0,
+                    scale: 1,
+                    stagger: {
+                      each: 0.08,
+                      from: "random",
+                      ease: "power2.out"// Slower stagger - more visible
+                    },
+                    
+                    duration: 2.0, // Much longer duration
+                    ease: "back.out(1.7)",
+                    onComplete: () => {
+                      gsap.set(splitText.chars, { willChange: 'auto' });
+                    }
+                  }
+                );
+              } else {
+                // Pattern B: Random rotation animation
+                gsap.fromTo(splitText.chars,
+                  { 
+                    autoAlpha: 0, 
+                    scale: 0, 
+                    rotation: 180 
+                  },
+                  { 
+                    autoAlpha: 1, 
+                    scale: 1, 
+                    rotation: 0,
+                    stagger: { 
+                      amount: 2.0, 
+                      from: 'random',
+                      ease: 'power2.inOut'
+                    },
+                    duration: 1.8,
+                    ease: "back.out(1.7)",
+                    onComplete: () => {
+                      gsap.set(splitText.chars, { willChange: 'auto' });
+                    }
+                  }
+                );
+              }
+            },
+            onLeave: () => {
+              gsap.set(splitText.chars, { 
+                autoAlpha: 1, 
+                y: 0, 
+                scale: 1, 
+                rotation: 0 
+              });
+            },
+            onEnterBack: () => {
+              if (usePatternA) {
+                // Simplified Pattern A for re-entry
+                gsap.from(splitText.chars, {
+                  autoAlpha: 0,
+                  y: 30,
+                  scale: 0.9,
+                  stagger: 0.04,
+                  duration: 1.0,
+                  ease: "power2.out",
                   onComplete: () => {
                     gsap.set(splitText.chars, { willChange: 'auto' });
                   }
-                }
-              );
-            },
-            onLeave: () => {
-              gsap.set(splitText.chars, { opacity: 1, y: 0 });
-            },
-            onEnterBack: () => {
-              gsap.from(splitText.chars, {
-                opacity: 0,
-                y: 30,
-                stagger: 0.02,
-                duration: 0.8,
-                ease: "power2.out",
-                onComplete: () => {
-                  // Clean up willChange for THIS specific splitText
-                  gsap.set(splitText.chars, { willChange: 'auto' });
-                }
-              });
+                });
+              } else {
+                // Simplified Pattern B for re-entry
+                gsap.from(splitText.chars, {
+                  autoAlpha: 0,
+                  scale: 0.5,
+                  rotation: 90,
+                  stagger: { 
+                    amount: 1.0, 
+                    from: 'random' 
+                  },
+                  duration: 1.2,
+                  ease: "power2.out",
+                  onComplete: () => {
+                    gsap.set(splitText.chars, { willChange: 'auto' });
+                  }
+                });
+              }
             }
           });
         });
