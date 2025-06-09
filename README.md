@@ -94,9 +94,11 @@ Link to deployed app url:
 
 [Collective Animal Nouns](https://collective-animal-nouns.onrender.com)
 
-Screen Recording of app demonstrating functionality:
+**Demo Video:**
 
-![functionality](https://drive.google.com/file/d/13qjeIEnhtFunas5cz-9eEjCiF7IARzkL/view?usp=sharing)
+[🎬 Watch App Demo](https://drive.google.com/file/d/13qjeIEnhtFunas5cz-9eEjCiF7IARzkL/view?usp=sharing)
+
+*Click the link above to view the full screen recording demonstrating the app's functionality and animations.*
 
 
 ## License
